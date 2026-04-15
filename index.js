@@ -10,7 +10,7 @@ const weatherApi = "https://api.weather.gov/alerts/active?area=";
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Matched IDs with your HTML
+   
     const searchButton = document.getElementById('fetch-alerts'); // Matches HTML
     const stateInput = document.getElementById('state-input');   // Matches HTML
     const displayDiv = document.getElementById('alerts-display'); // Matches HTML
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchWeatherAlerts(state) {
         const url = "https://api.weather.gov/alerts/active?area=CA";
         
-        // Reset UI: Clear text and hide error using classList
+        
         errorDiv.textContent = '';
         errorDiv.classList.add('hidden'); 
 
@@ -64,6 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function showError(message) {
         displayDiv.innerHTML = '';
         errorDiv.textContent = message;
-        errorDiv.classList.remove('hidden'); // Makes it visible
+        errorDiv.classList.remove('hidden'); 
     }
 });
