@@ -9,27 +9,61 @@ const weatherApi = "https://api.weather.gov/alerts/active?area=";
     // create an event listener to trigger the button 
 
 
-function displayerror(message){
-    const displayDiv = document.getElementById("alerts-message");
-    const errorDiv = document.getElementById("error-message");
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Matched IDs with your HTML
+    const searchButton = document.getElementById('fetch-alerts'); // Matches HTML
+    const stateInput = document.getElementById('state-input');   // Matches HTML
+    const displayDiv = document.getElementById('alerts-display'); // Matches HTML
+    const errorDiv = document.getElementById('error-message');    // Matches HTML
 
-    displayDiv.innerHTML = "";
+    searchButton.addEventListener('click', () => {
+        const state = stateInput.value.trim();
+        stateInput.value = '';
 
-    errorDiv.textContent = message;
-    errorDiv.classList.remove("hidden");
-}
-
-if(typeof document !== "undefined"){
-    const searchBtn = document.getElementById("search-btn");
-    const stateInput = document.getElementById("state-input");
-
-    searchBtn.addEventListener("click", () => {
-        const stateAbbr = stateInput.value.trim();
-        fetchWeatherAlerts(stateAbbr);
+        if (state) {
+            fetchWeatherAlerts(state);
+        } else {
+            showError("");
+        }
     });
-}
 
-if(typeof module !=="undefined"){
-    module.exports = { fetchWeatherAlerts, displayAlerts, displayError};
-}
+    async function fetchWeatherAlerts(state) {
+        const url = "https://api.weather.gov/alerts/active?area=CA";
+        
+        // Reset UI: Clear text and hide error using classList
+        errorDiv.textContent = '';
+        errorDiv.classList.add('hidden'); 
 
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Status: ${response.status}`);
+            
+            const data = await response.json();
+            console.log(data);
+            displayAlerts(data);
+        } catch (error) {
+            showError(error.message);
+        }
+    }
+
+    function displayAlerts(data) {
+        displayDiv.innerHTML = ''; 
+        const summary = document.createElement('h3');
+        summary.textContent = `${data.title}: ${data.features.length}`;
+        displayDiv.append(summary);
+
+        const list = document.createElement('ul');
+        data.features.forEach(alert => {
+            const li = document.createElement('li');
+            li.textContent = alert.properties.headline;
+            list.append(li);
+        });
+        displayDiv.append(list);
+    }
+
+    function showError(message) {
+        displayDiv.innerHTML = '';
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden'); // Makes it visible
+    }
+});
